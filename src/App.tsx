@@ -4,29 +4,28 @@ import InvoicesPage from "@/pages/InvoicesPage";
 import Timetable from "@/pages/Timetable";
 import ProjectPlan from "@/pages/ProjectPlan";
 import UserManagement from "@/pages/UserManagement";
+import ProjectOverview from "@/pages/ProjectOverview";
 
-function App() {
+export default function App() {
   return (
     <Router>
-      <div className="p-4">
-        <nav className="flex space-x-4 mb-4">
-          <Link to="/">🏠 Dashboard</Link>
-          <Link to="/invoices">📄 Rechnungen</Link>
-          <Link to="/timetable">🕒 Zeitleiste</Link>
-          <Link to="/plan">🗂️ Projektplan</Link>
-          <Link to="/users">👥 Benutzer</Link>
-        </nav>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/invoices" element={<InvoicesPage />} />
-          <Route path="/timetable" element={<Timetable />} />
-          <Route path="/plan" element={<ProjectPlan />} />
-          <Route path="/users" element={<UserManagement />} />
-        </Routes>
-      </div>
+      <nav className="p-4 bg-gray-100 flex gap-4">
+        <Link to="/">🏠 Dashboard</Link>
+        <Link to="/invoices">📄 Rechnungen</Link>
+        <Link to="/timetable">🕒 Zeitleiste</Link>
+        <Link to="/plan">🗂️ Projektplan</Link>
+        <Link to="/overview">📋 Projektübersicht</Link>
+        <Link to="/users">👥 Benutzerverwaltung</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/invoices" element={<InvoicesPage />} />
+        <Route path="/timetable" element={<Timetable />} />
+        <Route path="/plan" element={<ProjectPlan />} />
+        <Route path="/overview" element={<ProjectOverview />} />
+        <Route path="/users" element={<UserManagement />} />
+      </Routes>
     </Router>
   );
 }
-
-export default App;
 
