@@ -1,3 +1,12 @@
+import { BrowserRouter } from "react-router-dom";
+
+function App() {
+  return (
+    <BrowserRouter basename="/doesinger-app/">
+      {/* dein Inhalt */}
+    </BrowserRouter>
+  );
+}
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/components/theme-provider';
