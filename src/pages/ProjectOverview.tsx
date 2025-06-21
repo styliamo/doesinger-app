@@ -1,10 +1,10 @@
-kimport { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface Project {
   id: string;
   name: string;
   deadline: string;
-  userIds: string[]; // für später
+  userIds: string[];
 }
 
 export default function ProjectOverview() {
