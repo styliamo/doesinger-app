@@ -1,59 +1,87 @@
-import React, { useState } from "react";
+kimport { useState } from "react";
 
 interface User {
   id: number;
   name: string;
   role: string;
-  assignedProjects: string[];
+  project: string;
 }
 
-const defaultUsers: User[] = [
-  { id: 1, name: "Max Vendor", role: "Vendor", assignedProjects: ["Neues Projekt"] },
-  { id: 2, name: "Lisa Client", role: "Client", assignedProjects: [] },
-];
-
-const availableProjects = ["Neues Projekt", "UX Redesign", "Marketing 2025"];
-
 export default function UserManagement() {
-  const [users, setUsers] = useState<User[]>(defaultUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("Vendor");
+  const [project, setProject] = useState("");
 
-  const toggleProject = (userId: number, project: string) => {
-    setUsers(users.map(user => {
-      if (user.id !== userId) return user;
-      const isAssigned = user.assignedProjects.includes(project);
-      return {
-        ...user,
-        assignedProjects: isAssigned
-          ? user.assignedProjects.filter(p => p !== project)
-          : [...user.assignedProjects, project],
-      };
-    }));
+  const addUser = () => {
+    if (!name.trim() || !project.trim()) return;
+    const newUser: User = {
+      id: Date.now(),
+      name,
+      role,
+      project,
+    };
+    setUsers([...users, newUser]);
+    setName("");
+    setRole("Vendor");
+    setProject("");
+  };
+
+  const deleteUser = (id: number) => {
+    setUsers(users.filter((user) => user.id !== id));
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">👤 Benutzerverwaltung</h1>
-      {users.map(user => (
-        <div key={user.id} className="border rounded p-4 mb-4">
-          <h2 className="font-semibold text-lg">{user.name} ({user.role})</h2>
-          <p className="text-sm mb-2">Zugewiesene Projekte:</p>
-          <div className="flex gap-2 flex-wrap">
-            {availableProjects.map(project => (
-              <button
-                key={project}
-                className={`px-2 py-1 border rounded ${
-                  user.assignedProjects.includes(project)
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-200"
-                }`}
-                onClick={() => toggleProject(user.id, project)}
-              >
-                {project}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4">Benutzerverwaltung</h2>
+      <div className="flex gap-2 mb-4">
+        <input
+          className="border p-2 flex-1"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          className="border p-2 flex-1"
+          placeholder="Projekt"
+          value={project}
+          onChange={(e) => setProject(e.target.value)}
+        />
+        <select
+          className="border p-2"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option>Vendor</option>
+          <option>Team Lead</option>
+          <option>Admin</option>
+        </select>
+        <button
+          className="bg-blue-500 text-white px-4 py-2"
+          onClick={addUser}
+        >
+          ➕ Hinzufügen
+        </button>
+      </div>
+      <ul className="space-y-2">
+        {users.map((user) => (
+          <li
+            key={user.id}
+            className="flex justify-between items-center border p-2"
+          >
+            <div>
+              <strong>{user.name}</strong> ({user.role}) – Projekt:{" "}
+              {user.project}
+            </div>
+            <button
+              className="bg-red-500 text-white px-2 py-1"
+              onClick={() => deleteUser(user.id)}
+            >
+              ❌ Löschen
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
