@@ -14,11 +14,10 @@ export default function App() {
         <Link className="mr-4" to="/plan">🗂️ Projektplan</Link>
         <Link className="mr-4" to="/overview">📄 Projektübersicht</Link>
         <Link className="mr-4" to="/users">👥 User-Verwaltung</Link>
-        {!profile && <Link className="mr-4 text-blue-500" to="/setup">📝 Profil anlegen</Link>}
+        {!profile && <Link className="mr-4" to="/setup">🛠️ Profil einrichten</Link>}
       </nav>
-
       <Routes>
-        <Route path="/" element={<h1 className="p-4 text-2xl">Dashboard-Übersicht</h1>} />
+        <Route path="/" element={<ProjectOverview />} />
         <Route path="/plan" element={<ProjectPlan />} />
         <Route path="/overview" element={<ProjectOverview />} />
         <Route path="/users" element={<UserManagement />} />
