@@ -1,3 +1,4 @@
+import UserManagement from "@/pages/UserManagement";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom"
 import Dashboard from "@/pages/Dashboard"
 import InvoicesPage from "@/pages/InvoicesPage"
