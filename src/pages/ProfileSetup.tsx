@@ -1,57 +1,59 @@
-import { useState } from "react";
+kimport { useState } from "react";
 
-interface ProfileData {
+interface Profile {
   name: string;
   email: string;
-  company: string;
+  role: "admin" | "vendor" | "user";
 }
 
 export default function ProfileSetup() {
-  const [profile, setProfile] = useState<ProfileData>({
-    name: "",
-    email: "",
-    company: "",
-  });
+  const stored = localStorage.getItem("profile");
+  const initial: Profile = stored ? JSON.parse(stored) : { name: "", email: "", role: "user" };
 
-  const handleChange = (key: keyof ProfileData, value: string) => {
-    setProfile({ ...profile, [key]: value });
-  };
+  const [profile, setProfile] = useState<Profile>(initial);
+  const [saved, setSaved] = useState(false);
 
-  const saveProfile = () => {
-    localStorage.setItem("userProfile", JSON.stringify(profile));
-    alert("Profil gespeichert!");
+  const handleSave = () => {
+    localStorage.setItem("profile", JSON.stringify(profile));
+    setSaved(true);
   };
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">👤 Profil vervollständigen</h2>
-      <div className="mb-4">
-        <label className="block">Name</label>
+      <h2 className="text-2xl font-bold mb-4">📝 Profil einrichten</h2>
+      <label className="block mb-2">Name:
         <input
-          className="border p-2 w-full"
+          className="border p-1 w-full"
           value={profile.name}
-          onChange={(e) => handleChange("name", e.target.value)}
+          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
         />
-      </div>
-      <div className="mb-4">
-        <label className="block">E-Mail</label>
+      </label>
+      <label className="block mb-2">Email:
         <input
-          className="border p-2 w-full"
+          type="email"
+          className="border p-1 w-full"
           value={profile.email}
-          onChange={(e) => handleChange("email", e.target.value)}
+          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
         />
-      </div>
-      <div className="mb-4">
-        <label className="block">Firma</label>
-        <input
-          className="border p-2 w-full"
-          value={profile.company}
-          onChange={(e) => handleChange("company", e.target.value)}
-        />
-      </div>
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={saveProfile}>
-        Speichern
+      </label>
+      <label className="block mb-4">Rolle:
+        <select
+          className="border p-1 w-full"
+          value={profile.role}
+          onChange={(e) => setProfile({ ...profile, role: e.target.value as Profile["role"] })}
+        >
+          <option value="user">User</option>
+          <option value="vendor">Vendor</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <button
+        className="bg-green-600 text-white px-4 py-2 rounded"
+        onClick={handleSave}
+      >
+        Profil speichern
       </button>
+      {saved && <p className="mt-2 text-green-700">✅ Profil gespeichert!</p>}
     </div>
   );
 }

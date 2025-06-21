@@ -1,111 +1,37 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-interface User {
-  id: number;
+interface Profile {
   name: string;
+  email: string;
   role: string;
-  projectIds: number[]; // Liste zugewiesener Projekt-IDs
 }
 
-interface Project {
-  id: number;
-  name: string;
-}
-
-const UserManagement = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [newUser, setNewUser] = useState({ name: "", role: "", projectIds: [] as number[] });
+export default function UserManagement() {
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    const savedUsers = localStorage.getItem("users");
-    const savedProjects = localStorage.getItem("projects");
-
-    if (savedUsers) setUsers(JSON.parse(savedUsers));
-    if (savedProjects) setProjects(JSON.parse(savedProjects));
+    const stored = localStorage.getItem("profile");
+    setProfile(stored ? JSON.parse(stored) : null);
   }, []);
 
-  const saveUsers = (updatedUsers: User[]) => {
-    localStorage.setItem("users", JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
-  };
-
-  const handleAddUser = () => {
-    const id = Date.now();
-    const updatedUsers = [...users, { ...newUser, id }];
-    saveUsers(updatedUsers);
-    setNewUser({ name: "", role: "", projectIds: [] });
-  };
-
-  const handleDeleteUser = (id: number) => {
-    const updatedUsers = users.filter((user) => user.id !== id);
-    saveUsers(updatedUsers);
-  };
-
-  const handleProjectToggle = (projectId: number) => {
-    setNewUser((prev) => {
-      const exists = prev.projectIds.includes(projectId);
-      const updatedProjects = exists
-        ? prev.projectIds.filter((id) => id !== projectId)
-        : [...prev.projectIds, projectId];
-      return { ...prev, projectIds: updatedProjects };
-    });
-  };
-
   return (
-    <div>
-      <h2 className="text-lg font-bold mb-2">User-Verwaltung</h2>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">👥 User-Verwaltung</h2>
 
-      <div className="mb-4 space-y-2">
-        <input
-          placeholder="Name"
-          className="border p-2 mr-2"
-          value={newUser.name}
-          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-        />
-        <input
-          placeholder="Rolle"
-          className="border p-2 mr-2"
-          value={newUser.role}
-          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-        />
-        <div className="flex flex-wrap gap-2">
-          {projects.map((project) => (
-            <label key={project.id} className="flex items-center space-x-1">
-              <input
-                type="checkbox"
-                checked={newUser.projectIds.includes(project.id)}
-                onChange={() => handleProjectToggle(project.id)}
-              />
-              <span>{project.name}</span>
-            </label>
-          ))}
-        </div>
-        <button onClick={handleAddUser} className="bg-green-500 text-white px-4 py-2 mt-2">
-          ➕ Hinzufügen
-        </button>
-      </div>
+      {!profile && <p>Kein Profil gefunden. Bitte Profil zuerst einrichten.</p>}
 
-      <ul className="space-y-2">
-        {users.map((user) => (
-          <li key={user.id} className="border p-2">
-            <strong>{user.name}</strong> ({user.role}) – Projekte:{" "}
-            {projects
-              .filter((p) => user.projectIds.includes(p.id))
-              .map((p) => p.name)
-              .join(", ")}
-            <button
-              onClick={() => handleDeleteUser(user.id)}
-              className="ml-4 bg-red-500 text-white px-2 py-1"
-            >
-              ❌ Löschen
-            </button>
-          </li>
-        ))}
-      </ul>
+      {profile && (
+        <>
+          <h3>Aktueller User:</h3>
+          <p><strong>Name:</strong> {profile.name}</p>
+          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Rolle:</strong> {profile.role}</p>
+        </>
+      )}
+
+      <hr className="my-4" />
+      <p>— Admin-Funktionen folgen (z. B. Zuweisung von Projekten)</p>
     </div>
   );
-};
-
-export default UserManagement;
+}
 
