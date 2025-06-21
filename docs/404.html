@@ -4,8 +4,7 @@
   <meta charset="utf-8"/>
   <title>Redirecting…</title>
   <script>
-    // SPA Redirect auf index.html
-    const path = window.location.pathname.replace(/\/doesinger-app/, '')
+    const path = window.location.pathname.replace(/^\/doesinger-app/, '')
     window.location.replace('/doesinger-app/' + path + window.location.search + window.location.hash)
   </script>
 </head>
