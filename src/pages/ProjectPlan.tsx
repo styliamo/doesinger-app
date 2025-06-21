@@ -19,6 +19,11 @@ export default function ProjectPlan() {
     ]);
   };
 
+  const deleteTask = (index: number) => {
+    const newTasks = tasks.filter((_, i) => i !== index);
+    setTasks(newTasks);
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">🗂️ Projektplan</h2>
@@ -28,6 +33,7 @@ export default function ProjectPlan() {
             <th className="border px-4 py-2">Task</th>
             <th className="border px-4 py-2">Deadline</th>
             <th className="border px-4 py-2">Status</th>
+            <th className="border px-4 py-2">Aktion</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +64,14 @@ export default function ProjectPlan() {
                   <option>In Arbeit</option>
                   <option>Erledigt</option>
                 </select>
+              </td>
+              <td className="border px-4 py-2 text-center">
+                <button
+                  onClick={() => deleteTask(i)}
+                  className="text-red-500 hover:underline"
+                >
+                  🗑️
+                </button>
               </td>
             </tr>
           ))}
