@@ -1,31 +1,30 @@
-import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import InvoicesPage from "./pages/InvoicesPage";
-import Timetable from "./pages/Timetable";
+import Invoices from "./pages/Invoices";
+import Timeline from "./pages/Timeline";
 import ProjectPlan from "./pages/ProjectPlan";
 import UserManagement from "./pages/UserManagement";
 import ProjectOverview from "./pages/ProjectOverview";
 
 function App() {
   return (
-    <Router>
-      <nav>
-        <ul>
-          <li><Link to="/">🏠 Dashboard</Link></li>
-          <li><Link to="/invoices">📄 Rechnungen</Link></li>
-          <li><Link to="/timetable">🕒 Zeitleiste</Link></li>
-          <li><Link to="/plan">🗂️ Projektplan</Link></li>
-          <li><Link to="/overview">📋 Projektübersicht</Link></li>
-          <li><Link to="/users">👥 Benutzerverwaltung</Link></li>
-        </ul>
+    <Router basename="/doesinger-app">
+      <nav className="bg-slate-900 text-white p-4 flex gap-4">
+        <Link to="/">🏠 Dashboard</Link>
+        <Link to="/invoices">📄 Rechnungen</Link>
+        <Link to="/timeline">🕒 Zeitleiste</Link>
+        <Link to="/projectplan">📋 Projektplan</Link>
+        <Link to="/user-management">👥 User-Verwaltung</Link>
+        <Link to="/project-overview">📊 Projektübersicht</Link>
       </nav>
+
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/invoices" element={<InvoicesPage />} />
-        <Route path="/timetable" element={<Timetable />} />
-        <Route path="/plan" element={<ProjectPlan />} />
-        <Route path="/overview" element={<ProjectOverview />} />
-        <Route path="/users" element={<UserManagement />} />
+        <Route path="/invoices" element={<Invoices />} />
+        <Route path="/timeline" element={<Timeline />} />
+        <Route path="/projectplan" element={<ProjectPlan />} />
+        <Route path="/user-management" element={<UserManagement />} />
+        <Route path="/project-overview" element={<ProjectOverview />} />
       </Routes>
     </Router>
   );
