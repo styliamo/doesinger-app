@@ -5,18 +5,21 @@ import Timetable from "@/pages/Timetable";
 import ProjectPlan from "@/pages/ProjectPlan";
 import UserManagement from "@/pages/UserManagement";
 import ProjectOverview from "@/pages/ProjectOverview";
+import ProjectTimeline from "@/pages/ProjectTimeline";
 
-function App() {
+export default function App() {
   return (
     <Router>
-      <nav style={{ display: "flex", gap: "1rem", padding: "1rem" }}>
-        <Link to="/">🏠 Dashboard</Link>
-        <Link to="/invoices">📄 Rechnungen</Link>
-        <Link to="/timetable">🕒 Zeitleiste</Link>
-        <Link to="/plan">🗂️ Projektplan</Link>
-        <Link to="/overview">📁 Projekte</Link>
-        <Link to="/users">👥 Nutzerverwaltung</Link>
+      <nav style={{ padding: "1rem", background: "#f0f0f0" }}>
+        <Link to="/">🏠 Dashboard</Link> |{" "}
+        <Link to="/invoices">📄 Rechnungen</Link> |{" "}
+        <Link to="/timetable">🕒 Zeitleiste</Link> |{" "}
+        <Link to="/plan">🗂️ Projektplan</Link> |{" "}
+        <Link to="/overview">📊 Projektübersicht</Link> |{" "}
+        <Link to="/users">👥 Nutzerverwaltung</Link> |{" "}
+        <Link to="/timeline">🗓️ Timeline</Link>
       </nav>
+
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/invoices" element={<InvoicesPage />} />
@@ -24,10 +27,9 @@ function App() {
         <Route path="/plan" element={<ProjectPlan />} />
         <Route path="/overview" element={<ProjectOverview />} />
         <Route path="/users" element={<UserManagement />} />
+        <Route path="/timeline" element={<ProjectTimeline />} />
       </Routes>
     </Router>
   );
 }
-
-export default App;
 
