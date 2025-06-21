@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+kimport { useState, useEffect } from "react";
 
 interface Project {
-  id: number;
+  id: string;
   name: string;
-  tasks: string[];
-  users: string[];
+  deadline: string;
+  userIds: string[]; // für später
 }
 
 export default function ProjectOverview() {
@@ -12,26 +12,31 @@ export default function ProjectOverview() {
 
   useEffect(() => {
     const stored = localStorage.getItem("projects");
-    if (stored) {
-      setProjects(JSON.parse(stored));
-    }
+    if (stored) setProjects(JSON.parse(stored));
   }, []);
 
   return (
-    <div>
-      <h2>📊 Projektübersicht</h2>
+    <div className="p-4">
+      <h1 className="text-2xl font-semibold mb-4">📊 Projektübersicht</h1>
       {projects.length === 0 ? (
         <p>Keine Projekte gefunden.</p>
       ) : (
-        <ul className="space-y-4">
-          {projects.map((project) => (
-            <li key={project.id} className="border p-4 rounded shadow-sm">
-              <h3 className="font-bold">{project.name}</h3>
-              <p>🧑‍🤝‍🧑 Zugewiesene Nutzer: {project.users.join(", ") || "Keine"}</p>
-              <p>✅ Aufgabenanzahl: {project.tasks.length}</p>
-            </li>
-          ))}
-        </ul>
+        <table className="w-full table-auto border">
+          <thead>
+            <tr className="bg-gray-200">
+              <th>Projektname</th>
+              <th>Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map((p) => (
+              <tr key={p.id} className="border-t">
+                <td className="p-2">{p.name}</td>
+                <td className="p-2">{p.deadline}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
