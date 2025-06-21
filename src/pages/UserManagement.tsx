@@ -1,30 +1,31 @@
-kimport { useState } from "react";
+import { useState } from "react";
 
 interface User {
   id: number;
   name: string;
   role: string;
-  project: string;
+  projects: string[];
 }
 
 export default function UserManagement() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("Vendor");
-  const [project, setProject] = useState("");
+  const [users, setUsers] = useState<User[]>([
+    { id: 1, name: "Max Mustermann", role: "Vendor", projects: ["Projekt A", "Projekt B"] },
+  ]);
+
+  const [newUser, setNewUser] = useState({ name: "", role: "", projects: "" });
 
   const addUser = () => {
-    if (!name.trim() || !project.trim()) return;
-    const newUser: User = {
-      id: Date.now(),
-      name,
-      role,
-      project,
-    };
-    setUsers([...users, newUser]);
-    setName("");
-    setRole("Vendor");
-    setProject("");
+    if (!newUser.name || !newUser.role) return;
+    setUsers([
+      ...users,
+      {
+        id: Date.now(),
+        name: newUser.name,
+        role: newUser.role,
+        projects: newUser.projects.split(",").map((p) => p.trim()),
+      },
+    ]);
+    setNewUser({ name: "", role: "", projects: "" });
   };
 
   const deleteUser = (id: number) => {
@@ -32,52 +33,44 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Benutzerverwaltung</h2>
-      <div className="flex gap-2 mb-4">
+    <div className="p-4 space-y-4">
+      <h2 className="text-xl font-bold">Benutzerverwaltung</h2>
+
+      <div className="flex gap-2">
         <input
-          className="border p-2 flex-1"
           placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={newUser.name}
+          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+          className="border px-2 py-1"
         />
         <input
-          className="border p-2 flex-1"
-          placeholder="Projekt"
-          value={project}
-          onChange={(e) => setProject(e.target.value)}
+          placeholder="Rolle"
+          value={newUser.role}
+          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+          className="border px-2 py-1"
         />
-        <select
-          className="border p-2"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <option>Vendor</option>
-          <option>Team Lead</option>
-          <option>Admin</option>
-        </select>
-        <button
-          className="bg-blue-500 text-white px-4 py-2"
-          onClick={addUser}
-        >
-          ➕ Hinzufügen
+        <input
+          placeholder="Projekte (Komma-getrennt)"
+          value={newUser.projects}
+          onChange={(e) => setNewUser({ ...newUser, projects: e.target.value })}
+          className="border px-2 py-1"
+        />
+        <button onClick={addUser} className="bg-blue-500 text-white px-4 py-1 rounded">
+          ➕ Benutzer hinzufügen
         </button>
       </div>
+
       <ul className="space-y-2">
         {users.map((user) => (
-          <li
-            key={user.id}
-            className="flex justify-between items-center border p-2"
-          >
-            <div>
-              <strong>{user.name}</strong> ({user.role}) – Projekt:{" "}
-              {user.project}
-            </div>
+          <li key={user.id} className="border p-2 rounded">
+            <strong>{user.name}</strong> – {user.role} <br />
+            Projekte: {user.projects.join(", ")}
+            <br />
             <button
-              className="bg-red-500 text-white px-2 py-1"
               onClick={() => deleteUser(user.id)}
+              className="text-red-600 hover:underline text-sm mt-1"
             >
-              ❌ Löschen
+              🗑️ Löschen
             </button>
           </li>
         ))}
