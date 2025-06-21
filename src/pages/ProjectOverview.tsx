@@ -1,42 +1,53 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Project {
-  id: string;
+  id: number;
   name: string;
   deadline: string;
-  userIds: string[];
+  description: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  projects: number[];
 }
 
 export default function ProjectOverview() {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [assignedProjects, setAssignedProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("projects");
-    if (stored) setProjects(JSON.parse(stored));
+    const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    setProjects(storedProjects);
+
+    const storedUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+    setUser(storedUser);
+
+    if (storedUser) {
+      const filtered = storedProjects.filter((p: Project) =>
+        storedUser.projects.includes(p.id)
+      );
+      setAssignedProjects(filtered);
+    }
   }, []);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4">📊 Projektübersicht</h1>
-      {projects.length === 0 ? (
-        <p>Keine Projekte gefunden.</p>
+    <div>
+      <h2>Meine Projekte</h2>
+      {assignedProjects.length === 0 ? (
+        <p>Dir wurden noch keine Projekte zugewiesen.</p>
       ) : (
-        <table className="w-full table-auto border">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Projektname</th>
-              <th>Deadline</th>
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map((p) => (
-              <tr key={p.id} className="border-t">
-                <td className="p-2">{p.name}</td>
-                <td className="p-2">{p.deadline}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ul>
+          {assignedProjects.map((project) => (
+            <li key={project.id}>
+              <strong>{project.name}</strong><br />
+              Deadline: {project.deadline}<br />
+              {project.description}
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
