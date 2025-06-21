@@ -1,104 +1,111 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface User {
   id: number;
   name: string;
   role: string;
-  projects: string[];
+  projectIds: number[]; // Liste zugewiesener Projekt-IDs
 }
 
-const availableProjects = ["Projekt A", "Projekt B", "Projekt C", "Projekt D"];
+interface Project {
+  id: number;
+  name: string;
+}
 
-export default function UserManagement() {
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: "Max Mustermann", role: "Vendor", projects: ["Projekt A", "Projekt B"] },
-  ]);
+const UserManagement = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [newUser, setNewUser] = useState({ name: "", role: "", projectIds: [] as number[] });
 
-  const [newUser, setNewUser] = useState({ name: "", role: "", projects: [] as string[] });
+  useEffect(() => {
+    const savedUsers = localStorage.getItem("users");
+    const savedProjects = localStorage.getItem("projects");
 
-  const toggleProject = (project: string) => {
-    setNewUser((prev) => ({
-      ...prev,
-      projects: prev.projects.includes(project)
-        ? prev.projects.filter((p) => p !== project)
-        : [...prev.projects, project],
-    }));
+    if (savedUsers) setUsers(JSON.parse(savedUsers));
+    if (savedProjects) setProjects(JSON.parse(savedProjects));
+  }, []);
+
+  const saveUsers = (updatedUsers: User[]) => {
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+    setUsers(updatedUsers);
   };
 
-  const addUser = () => {
-    if (!newUser.name || !newUser.role) return;
-    setUsers([
-      ...users,
-      {
-        id: Date.now(),
-        name: newUser.name,
-        role: newUser.role,
-        projects: newUser.projects,
-      },
-    ]);
-    setNewUser({ name: "", role: "", projects: [] });
+  const handleAddUser = () => {
+    const id = Date.now();
+    const updatedUsers = [...users, { ...newUser, id }];
+    saveUsers(updatedUsers);
+    setNewUser({ name: "", role: "", projectIds: [] });
   };
 
-  const deleteUser = (id: number) => {
-    setUsers(users.filter((user) => user.id !== id));
+  const handleDeleteUser = (id: number) => {
+    const updatedUsers = users.filter((user) => user.id !== id);
+    saveUsers(updatedUsers);
+  };
+
+  const handleProjectToggle = (projectId: number) => {
+    setNewUser((prev) => {
+      const exists = prev.projectIds.includes(projectId);
+      const updatedProjects = exists
+        ? prev.projectIds.filter((id) => id !== projectId)
+        : [...prev.projectIds, projectId];
+      return { ...prev, projectIds: updatedProjects };
+    });
   };
 
   return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-xl font-bold">Benutzerverwaltung</h2>
+    <div>
+      <h2 className="text-lg font-bold mb-2">User-Verwaltung</h2>
 
-      <div className="flex flex-col gap-2">
+      <div className="mb-4 space-y-2">
         <input
           placeholder="Name"
+          className="border p-2 mr-2"
           value={newUser.name}
           onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-          className="border px-2 py-1"
         />
         <input
           placeholder="Rolle"
+          className="border p-2 mr-2"
           value={newUser.role}
           onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-          className="border px-2 py-1"
         />
-
-        <div>
-          <p className="text-sm font-medium mb-1">Projekte zuweisen:</p>
-          <div className="flex flex-wrap gap-2">
-            {availableProjects.map((project) => (
-              <label key={project} className="flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  checked={newUser.projects.includes(project)}
-                  onChange={() => toggleProject(project)}
-                />
-                {project}
-              </label>
-            ))}
-          </div>
+        <div className="flex flex-wrap gap-2">
+          {projects.map((project) => (
+            <label key={project.id} className="flex items-center space-x-1">
+              <input
+                type="checkbox"
+                checked={newUser.projectIds.includes(project.id)}
+                onChange={() => handleProjectToggle(project.id)}
+              />
+              <span>{project.name}</span>
+            </label>
+          ))}
         </div>
-
-        <button onClick={addUser} className="bg-blue-600 text-white px-4 py-1 rounded mt-2">
-          ➕ Benutzer hinzufügen
+        <button onClick={handleAddUser} className="bg-green-500 text-white px-4 py-2 mt-2">
+          ➕ Hinzufügen
         </button>
       </div>
 
-      <ul className="space-y-2 pt-4">
+      <ul className="space-y-2">
         {users.map((user) => (
-          <li key={user.id} className="border p-3 rounded">
-            <strong>{user.name}</strong> – {user.role}
-            <br />
-            Projekte: {user.projects.join(", ")}
-            <br />
+          <li key={user.id} className="border p-2">
+            <strong>{user.name}</strong> ({user.role}) – Projekte:{" "}
+            {projects
+              .filter((p) => user.projectIds.includes(p.id))
+              .map((p) => p.name)
+              .join(", ")}
             <button
-              onClick={() => deleteUser(user.id)}
-              className="text-red-600 hover:underline text-sm mt-1"
+              onClick={() => handleDeleteUser(user.id)}
+              className="ml-4 bg-red-500 text-white px-2 py-1"
             >
-              🗑️ Löschen
+              ❌ Löschen
             </button>
           </li>
         ))}
       </ul>
     </div>
   );
-}
+};
+
+export default UserManagement;
 
