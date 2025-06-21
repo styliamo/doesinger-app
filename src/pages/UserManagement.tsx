@@ -7,12 +7,23 @@ interface User {
   projects: string[];
 }
 
+const availableProjects = ["Projekt A", "Projekt B", "Projekt C", "Projekt D"];
+
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([
     { id: 1, name: "Max Mustermann", role: "Vendor", projects: ["Projekt A", "Projekt B"] },
   ]);
 
-  const [newUser, setNewUser] = useState({ name: "", role: "", projects: "" });
+  const [newUser, setNewUser] = useState({ name: "", role: "", projects: [] as string[] });
+
+  const toggleProject = (project: string) => {
+    setNewUser((prev) => ({
+      ...prev,
+      projects: prev.projects.includes(project)
+        ? prev.projects.filter((p) => p !== project)
+        : [...prev.projects, project],
+    }));
+  };
 
   const addUser = () => {
     if (!newUser.name || !newUser.role) return;
@@ -22,10 +33,10 @@ export default function UserManagement() {
         id: Date.now(),
         name: newUser.name,
         role: newUser.role,
-        projects: newUser.projects.split(",").map((p) => p.trim()),
+        projects: newUser.projects,
       },
     ]);
-    setNewUser({ name: "", role: "", projects: "" });
+    setNewUser({ name: "", role: "", projects: [] });
   };
 
   const deleteUser = (id: number) => {
@@ -36,7 +47,7 @@ export default function UserManagement() {
     <div className="p-4 space-y-4">
       <h2 className="text-xl font-bold">Benutzerverwaltung</h2>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         <input
           placeholder="Name"
           value={newUser.name}
@@ -49,21 +60,33 @@ export default function UserManagement() {
           onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
           className="border px-2 py-1"
         />
-        <input
-          placeholder="Projekte (Komma-getrennt)"
-          value={newUser.projects}
-          onChange={(e) => setNewUser({ ...newUser, projects: e.target.value })}
-          className="border px-2 py-1"
-        />
-        <button onClick={addUser} className="bg-blue-500 text-white px-4 py-1 rounded">
+
+        <div>
+          <p className="text-sm font-medium mb-1">Projekte zuweisen:</p>
+          <div className="flex flex-wrap gap-2">
+            {availableProjects.map((project) => (
+              <label key={project} className="flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  checked={newUser.projects.includes(project)}
+                  onChange={() => toggleProject(project)}
+                />
+                {project}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <button onClick={addUser} className="bg-blue-600 text-white px-4 py-1 rounded mt-2">
           ➕ Benutzer hinzufügen
         </button>
       </div>
 
-      <ul className="space-y-2">
+      <ul className="space-y-2 pt-4">
         {users.map((user) => (
-          <li key={user.id} className="border p-2 rounded">
-            <strong>{user.name}</strong> – {user.role} <br />
+          <li key={user.id} className="border p-3 rounded">
+            <strong>{user.name}</strong> – {user.role}
+            <br />
             Projekte: {user.projects.join(", ")}
             <br />
             <button
