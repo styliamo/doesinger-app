@@ -1,37 +1,33 @@
 import { useEffect, useState } from "react";
 
 interface Project {
-  id: number;
+  id: string;
   name: string;
-  users: string[]; // Benutzer-E-Mails oder IDs
 }
 
 export default function ProjectOverview() {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [currentUser, setCurrentUser] = useState<string>("");
 
   useEffect(() => {
-    const savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    setProjects(savedProjects);
-
-    const email = localStorage.getItem("userEmail");
-    if (email) {
-      setCurrentUser(email);
-    }
+    const allProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+    const currentUser = window.currentUser || { projectIds: [] };
+    const filteredProjects = allProjects.filter((p: Project) =>
+      currentUser.projectIds.includes(p.id)
+    );
+    setProjects(filteredProjects);
   }, []);
-
-  const visibleProjects = projects.filter((project) =>
-    project.users.includes(currentUser)
-  );
 
   return (
     <div>
       <h2>Meine Projekte</h2>
       <ul>
-        {visibleProjects.map((project) => (
+        {projects.map((project) => (
           <li key={project.id}>{project.name}</li>
         ))}
       </ul>
+      {projects.length === 0 && (
+        <p>Keine Projekte verfügbar. Bitte wenden Sie sich an den Admin.</p>
+      )}
     </div>
   );
 }
